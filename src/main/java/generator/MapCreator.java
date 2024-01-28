@@ -19,7 +19,6 @@ public class MapCreator {
         int x = Math.abs(random.nextInt()) % size;
         int y = Math.abs(random.nextInt()) % size;
         new Player(x, y, playground);
-        playground.getMap().setSymbol(x, y, 'p');
     }
 
     private static void setGoal() {
@@ -27,37 +26,43 @@ public class MapCreator {
             int x = Math.abs(random.nextInt()) % size;
             int y = Math.abs(random.nextInt()) % size;
             if (playground.getMap().getSymbol(x, y) == 0) {
-                playground.getMap().setSymbol(x, y, 'g');
                 playground.getMap().setExit(new Exit(x, y));
                 break;
             }
         }
     }
 
+
+    //переделать
     private static void setPath() {
         Player player = playground.getPlayer();
         Exit exit = playground.getMap().getExit();
-        int xMin = Math.min(player.getX(), exit.getX());
-        int xMax = Math.max(player.getX(), exit.getX());
-        int yMin = Math.min(player.getY(), exit.getY());
-        int yMax = Math.max(player.getY(), exit.getY());
-        while (xMin != xMax && yMin != yMax) {
+        int xStart = player.getX();
+        int yStart = player.getY();
+        int xGoal = exit.getX();
+        int yGoal = exit.getY();
+        while (xStart != xGoal || yStart != yGoal) {
             int in = random.nextInt() % 2;
             switch (in) {
                 case 0:
-                    if (xMin != xMax) {
-                        xMin++;
-                        playground.getMap().setSymbol(xMin, yMin, 'c');
+                    if (xStart < xGoal) {
+                        xStart++;
+                    } else if (xStart > xGoal) {
+                        xStart--;
                     }
                     break;
                 case 1:
-                    if (yMin != yMax) {
-                        yMin++;
-                        playground.getMap().setSymbol(xMin, yMin, 'c');
+                    if (yStart < yGoal) {
+                        yStart++;
+                    } else if (yStart > yGoal) {
+                        yStart--;
                     }
                     break;
             }
+            playground.getMap().setSymbol(xStart, yStart, 'c');
         }
+        playground.getMap().setSymbol(player.getX(), player.getY(), 'p');
+        playground.getMap().setSymbol(xStart,yStart,'g');
     }
 
     private static void setEnemies() {
